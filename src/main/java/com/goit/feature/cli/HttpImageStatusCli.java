@@ -1,7 +1,7 @@
 package com.goit.feature.cli;
 
-import com.goit.feature.HttpStatusChecker;
 import com.goit.feature.HttpStatusImageDownloader;
+import com.goit.feature.util.UtilHttpResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Scanner;
@@ -23,20 +23,23 @@ public class HttpImageStatusCli {
             code = Integer.parseInt(s);
 
             try {
-                HttpStatusChecker checker = new HttpStatusChecker();
-                int statusCode = checker.getStringHttpResponse(code).statusCode();
+                int statusCode = new UtilHttpResponse().getStringHttpResponse(code).statusCode();
                 if (statusCode != 404) {
                     HttpStatusImageDownloader downloader = new HttpStatusImageDownloader();
                     downloader.downloadStatusImage(code);
+                    System.out.println("Image for HTTP status " + code + " - saved successfully! :)");
+                    System.out.println("Please enter a new number: ");
+                    askStatusService();
+
                 } else {
-                    System.err.println("There is not image for HTTP status " + code);
+                    System.out.println("There is not image for HTTP status " + code + "!");
+                    System.out.println("Please enter valid number: ");
+                    askStatusService();
                 }
 
             } catch (Exception ex) {
                 System.out.println("Please enter valid number: ");
             }
-
-            scanner.close();
         } else {
             System.out.print("Please enter valid number: ");
             askStatusService();
