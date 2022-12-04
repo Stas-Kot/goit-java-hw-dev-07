@@ -1,20 +1,32 @@
 package com.goit.feature;
 
 import com.goit.feature.exceptions.NotFoundException;
-import com.goit.feature.util.UtilHttpResponse;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class HttpStatusChecker {
+    private static final HttpClient CLIENT = HttpClient.newHttpClient();
 
     public String getStatusImage(int code) throws IOException, InterruptedException, NotFoundException {
-        HttpResponse<String> response = new UtilHttpResponse().getStringHttpResponse(code);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(getUrlString(code)))
+                .GET()
+                .build();
 
-        if(response.statusCode() != 404) {
+        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 404) {
             return response.uri().toString();
         } else {
-            throw  new NotFoundException("Invalid code for request");
+            throw new NotFoundException("Invalid code for request");
         }
+    }
+
+    private String getUrlString(int code) {
+        return "https://http.cat/" + code + ".jpg";
     }
 }

@@ -1,61 +1,47 @@
 package com.goit.feature.cli;
 
 import com.goit.feature.HttpStatusImageDownloader;
-import com.goit.feature.util.UtilHttpResponse;
 import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
 import java.util.Scanner;
+
 
 @RequiredArgsConstructor
 public class HttpImageStatusCli {
     private final Scanner scanner;
+    private boolean isCorrectNumberFormat = true;
 
-    public void askStatus() {
-        System.out.print("Enter HTTP status code: ");
-        askStatusService();
-    }
+    public void askStatus(){
+        if (isCorrectNumberFormat) {
+            System.out.print("Enter HTTP status code: ");
+        }
 
-    private void askStatusService() {
-        int code;
         String s = scanner.nextLine();
 
-        if(isNumeric(s)) {
-            code = Integer.parseInt(s);
+        if (isNumeric(s)) {
+            int code = Integer.parseInt(s);
 
+            HttpStatusImageDownloader downloader = new HttpStatusImageDownloader();
             try {
-                int statusCode = new UtilHttpResponse().getStringHttpResponse(code).statusCode();
-                if (statusCode != 404) {
-                    HttpStatusImageDownloader downloader = new HttpStatusImageDownloader();
-                    downloader.downloadStatusImage(code);
-                    System.out.println("Image for HTTP status " + code + " - saved successfully! :)");
-                    System.out.println("Please enter a new number: ");
-                    askStatusService();
-
-                } else {
-                    System.out.println("There is not image for HTTP status " + code + "!");
-                    System.out.println("Please enter valid number: ");
-                    askStatusService();
-                }
-
-            } catch (Exception ex) {
-                System.out.println("Please enter valid number: ");
+                downloader.downloadStatusImage(code);
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
             }
-        } else {
-            System.out.print("Please enter valid number: ");
-            askStatusService();
-        }
+            isCorrectNumberFormat = true;
+        };
+
+        askStatus();
     }
 
     private boolean isNumeric(String string) {
-        if(string == null || string.equals("")) {
-            return false;
-        }
-
         try {
-            int intValue = Integer.parseInt(string);
+            Integer.parseInt(string);
             return true;
         } catch (NumberFormatException e) {
+            System.out.print("Please enter valid number: ");
+            isCorrectNumberFormat = false;
+            return false;
         }
-        return false;
     }
 }
