@@ -22,7 +22,7 @@ public class HttpStatusChecker {
         if (response.statusCode() != 404) {
             return response.uri().toString();
         } else {
-            throw new NotFoundException("Invalid code for request");
+            throw new NotFoundException("There is not image for HTTP status " + code + "!");
         }
     }
 

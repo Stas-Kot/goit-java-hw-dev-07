@@ -1,6 +1,7 @@
 package com.goit.feature.cli;
 
 import com.goit.feature.HttpStatusImageDownloader;
+import com.goit.feature.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -25,8 +26,9 @@ public class HttpImageStatusCli {
             HttpStatusImageDownloader downloader = new HttpStatusImageDownloader();
             try {
                 downloader.downloadStatusImage(code);
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
+                System.out.println("Image for HTTP status " + code + " - saved successfully! :)");
+            } catch (IOException | InterruptedException | NotFoundException e) {
+                System.out.println(e.getMessage());
             }
             isCorrectNumberFormat = true;
         };
